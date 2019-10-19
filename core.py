@@ -3,6 +3,7 @@ from dialog_bot_sdk import interactive_media
 from dialog_api import messaging_pb2
 import time
 import grpc
+import q_config.core as q_config
 
 
 class LocalMessage:
@@ -11,42 +12,17 @@ class LocalMessage:
         self.date = date
 
 
+LocalUser = dict()
+
+
 def on_msg(*params):
     print(params)
     msg_text = params[0].message.textMessage.text
     if (msg_text == 'Хочу вопрос'):
         bot.messaging.send_message(
             params[0].peer,
-            "Артем гей?",
-            [interactive_media.InteractiveMediaGroup(
-                [
-                    interactive_media.InteractiveMedia(
-                        1,
-                        interactive_media.InteractiveMediaButton("True", "Да!")
-                    ),
-                    interactive_media.InteractiveMedia(
-                        1,
-                        interactive_media.InteractiveMediaButton("Flase", "Нет!")
-                    )
-                ]
-            )]
-        )
-    elif (msg_text == 'Хочу другой вопрос'):
-        bot.messaging.send_message(
-            params[0].peer,
-            "Темир гей?",
-            [interactive_media.InteractiveMediaGroup(
-                [
-                    interactive_media.InteractiveMedia(
-                        2,
-                        interactive_media.InteractiveMediaButton("Flase", "Нет!")
-                    ),
-                    interactive_media.InteractiveMedia(
-                        2,
-                        interactive_media.InteractiveMediaButton("True", "Да!")
-                    )
-                ]
-            )]
+            q_config.get_q(0, 0),
+            q_config.get_a(0, 0, 0)
         )
     else:
         bot.messaging.send_message(
@@ -57,25 +33,38 @@ def on_msg(*params):
 def on_click(*params):
     # print(int(time.time()))
     qId = params[0].id
+    print(qId)
     qA = params[0].value
     message = LocalMessage(params[0].mid, int(time.time() * 1000))
-    if (qId == '1'):
-        if (qA == 'True'):
-            answer = 'Все верно, Артем гей!'
-        else:
-            answer = 'Увы, но Артем гей!'
+    tmp = qId.split('.')
+    qSet = int(tmp[0])
+    qId = int(tmp[1])
+    uScore = int(tmp[2])
+    if qA == q_config.get_A(qSet, qId):
+        uScore += 1
+    if q_config.get_is_final(qSet, qId):
         bot.messaging.update_message(
             message,
-            answer
+            'Подзравляю, Вы прошли тест!\n' + 
+            'Ваш результат: ' + str(uScore) + ' / 4.'
         )
-    elif (qId == '2'):
-        if (qA == 'True'):
-            answer = 'Все верно, Темир гей!'
-        else:
-            answer = 'Увы, но Темир гей!'
+    else:
+        # bot.messaging.update_message(
+        #     message,
+        #     q_config.get_q(qSet, qId + 1),
+        #     q_config.get_a(qSet, qId + 1, uScore)
+        # )
         bot.messaging.update_message(
             message,
-            answer
+            'Test',
+            [interactive_media.InteractiveMediaGroup(
+                [
+                    interactive_media.InteractiveMedia(
+                        '1',
+                        interactive_media.InteractiveMediaButton('Test', 'Test')
+                    )
+                ]
+            )]
         )
     
 
