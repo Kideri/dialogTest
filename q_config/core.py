@@ -8,12 +8,14 @@ def get_q(set_id, id):
 def get_a(set_id, id, score):
     ret = []
     answ = q_s.q_list[set_id][id].get_a()
+    bId = 1
     for cur in answ:
         ret.append(
             interactive_media.InteractiveMedia(
-                str(set_id) + '.' + str(id) + '.' + str(score),
+                str(set_id) + '.' + str(id) + '.' + str(score) + '.' + str(bId),
                 interactive_media.InteractiveMediaButton(cur[1], cur[0])
         ))
+        bId += 1
     return [interactive_media.InteractiveMediaGroup(ret)]
 
 

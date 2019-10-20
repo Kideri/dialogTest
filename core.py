@@ -16,7 +16,7 @@ LocalUser = dict()
 
 
 def on_msg(*params):
-    print(params)
+    # print(params)
     msg_text = params[0].message.textMessage.text
     if (msg_text == 'Хочу вопрос'):
         bot.messaging.send_message(
@@ -49,23 +49,23 @@ def on_click(*params):
             'Ваш результат: ' + str(uScore) + ' / 4.'
         )
     else:
-        # bot.messaging.update_message(
-        #     message,
-        #     q_config.get_q(qSet, qId + 1),
-        #     q_config.get_a(qSet, qId + 1, uScore)
-        # )
         bot.messaging.update_message(
             message,
-            'Test',
-            [interactive_media.InteractiveMediaGroup(
-                [
-                    interactive_media.InteractiveMedia(
-                        '1',
-                        interactive_media.InteractiveMediaButton('Test', 'Test')
-                    )
-                ]
-            )]
+            q_config.get_q(qSet, qId + 1),
+            q_config.get_a(qSet, qId + 1, uScore)
         )
+        # bot.messaging.update_message(
+        #     message,
+        #     'Test',
+        #     [interactive_media.InteractiveMediaGroup(
+        #         [
+        #             interactive_media.InteractiveMedia(
+        #                 '2',
+        #                 interactive_media.InteractiveMediaButton('Test', 'Test')
+        #             )
+        #         ]
+        #     )]
+        # )
     
 
 
